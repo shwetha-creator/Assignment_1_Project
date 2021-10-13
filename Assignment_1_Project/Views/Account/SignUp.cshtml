@@ -1,0 +1,121 @@
+﻿@model Assignment_1_Project.Models.UserModel
+
+@{
+    ViewData["Title"] = "SignUp";
+}
+
+
+<h1>SignUp</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="SignUp">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Username" class="control-label"></label>
+                <input asp-for="Username" class="form-control" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Contact" class="control-label"></label>
+                <input asp-for="Contact" class="form-control" />
+                <span asp-validation-for="Contact" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Country" class="control-label"></label>
+                <select id="ddlCountryList" asp-for="Country" class="form-control" asp-items="@ViewBag.country">
+                    <option value="">--Select--</option>
+                </select>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="City" class="control-label"></label>
+                <select id="ddlCityList" asp-for="City" class="form-control" asp-items="@ViewBag.city">
+                    <option value="">--Select--</option>
+                </select>
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gender" class="control-label"></label>
+                @foreach (var g in ViewBag.Gender)
+                {
+
+                    <input id="@g.Text" type="radio" name="Gender" value="@g.Value" />
+                    <label for="@g.Value">@g.Text</label>
+
+
+                }
+
+                <span asp-validation-for="Gender" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="AcceptTerms" /> @Html.DisplayNameFor(model => model.AcceptTerms)
+                </label>
+                <span asp-validation-for="AcceptTerms" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="SignUp" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    @*<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>*@
+    <script>
+        jQuery.validator.unobtrusive.adapters.add("chkbox", function (options) {
+            if (options.element.tagName.toUpperCase() == "INPUT" && options.element.type.toUpperCase() == "CHECKBOX") {
+                options.rules["required"] = true;
+                if (options.message) {
+                    options.messages["required"] = options.message;
+                }
+            }
+        });
+    </script>
+       
+        <script type="text/javascript">
+            //Insert default item "Select" in dropdownlist on load
+            $(document).ready(function () {
+                var items = "<option value='0'>--Select--</option>";
+            $("#ddlCityList").html(items);
+            });
+
+            //Bind City dropdownlist
+            $("#ddlCountryList").change(function () {
+                var countryId = $("#ddlCountryList").val();
+            var url = "/Account/GetCityList";
+
+            $.getJSON(url, {CountryId: countryId }, function (data) {
+                    var item = "";
+            $("#ddlCityList").empty();
+            $.each(data, function (i, city) {
+                item += '<option value="' + city.value + '">' + city.text + '</option>'
+            });
+            $("#ddlCityList").html(item);
+                });
+            });
+    </script>
+
+}
